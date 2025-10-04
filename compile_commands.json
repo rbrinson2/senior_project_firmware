@@ -1,0 +1,18 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "build/raspberryPiSensors.o",
+      "-Wl,-z,relro",
+      "-Wl,-z,now",
+      "-Wl,-E",
+      "-o",
+      "gpmu-daemon",
+      "src/main.c"
+    ],
+    "directory": "/home/rbrin/Documents/agentx_gpmu",
+    "file": "/home/rbrin/Documents/agentx_gpmu/src/main.c",
+    "output": "/home/rbrin/Documents/agentx_gpmu/gpmu-daemon"
+  }
+]
