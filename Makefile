@@ -7,10 +7,6 @@ BUILD_DIR := ./build
 SRC_DIR := ./src
 INC_DIR := ./inc
 
-OBJS=
-SRCS=
-INCS=
-
 MAIN_SRC := $(SRC_DIR)/main.c
 MAIN_OBJ := $(BUILD_DIR)/main.o
 MAIN_INC := $(INC_DIR)/main.h
@@ -37,7 +33,6 @@ INCS += $(SENSOR_INC)
 
 TARGETS= $(TARGET_EXE) $(MAIN) $(OBJS)
 
-
 WIRINGPI=-lwiringPi
 CFLAGS=-I. -I$(INC_DIR) `net-snmp-config --cflags`
 BUILDAGENTLIBS=`net-snmp-config --agent-libs`
@@ -51,14 +46,8 @@ $(BUILD_DIR):
 $(TARGET_EXE): $(OBJS)
 	$(CC) -o $@ $^ $(BUILDAGENTLIBS) $(WIRINGPI)
 
-$(MAIN_OBJ): $(MAIN_SRC) $(MAIN_INC)
-	$(CC) $(CFLAGS) -o $@ -c $<
-
-$(MIB_OBJ): $(MIB_SRC) $(MIB_INC)
-	$(CC) $(CFLAGS) -o $@ -c $<
-
-$(SENSOR_OBJ): $(SENSOR_SRC) $(SENSOR_INC)
-	$(CC) $(CFLAGS) -o $@ -c $<
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/%.h
+	$(CC) $(CFLAGS) -o $@ -c $< 
 
 .PHONY: clean all
 clean:
