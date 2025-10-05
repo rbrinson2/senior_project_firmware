@@ -20,7 +20,7 @@ int errorCount = 0;
 int upTime = 0;
 
 void setCurrent(){
-    sensorInit();
+    gpmuInit();
     current += 1;
 }
 /** Initializes the raspberryPiSensors module */
