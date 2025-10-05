@@ -1,7 +1,7 @@
 
 CC=gcc
 
-TARGET_EXE := gpmu-daemon
+TARGET_EXE := ./build/gpmu-daemon
 
 BUILD_DIR := ./build
 SRC_DIR := ./src
