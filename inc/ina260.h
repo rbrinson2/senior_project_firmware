@@ -6,5 +6,8 @@
 #define I2C_ADDR 0x40
 
 extern void gpmuInit();
+extern float getCurrent();
+extern float getVoltage();
+extern float getPower();
 
 #endif

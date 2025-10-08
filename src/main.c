@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "main.h"
+#include "ina260.h"
 #include "raspberryPiSensors.h"
 
 static int keep_running;
@@ -16,6 +17,8 @@ RETSIGTYPE stop_server(int a) {
 
 
 int main(){
+
+    gpmuInit();
 
     // Print log errors to stderr
     snmp_enable_stderrlog();

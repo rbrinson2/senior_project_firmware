@@ -1,4 +1,5 @@
 #include "ina260.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -6,6 +7,11 @@
 #include <wiringPiI2C.h>
 #include <wiringSerial.h>
 
+#define INA260_CONFIG_ADDR  0x00
+#define INA260_CURRENT_ADDR  0x01
+#define INA260_VOLTAGE_ADDR  0x02
+#define INA260_POWER_ADDR  0x03
+#define NEGATIVE_SIGN 0x8000
 
 int fd_serial;
 int fd_i2c;
@@ -20,5 +26,31 @@ void gpmuInit() {
     }
 
     fd_i2c = wiringPiI2CSetup(I2C_ADDR);
+}
+
+
+void reverseHalfWord(uint16_t *halfword){
+    uint16_t firstHalf = *halfword >> 8;
+    uint16_t secondHalf = *halfword << 8;
+
+    *halfword = secondHalf | firstHalf;
+}
+
+float getCurrent(){
+    uint16_t c = wiringPiI2CReadReg16(fd_i2c, INA260_CURRENT_ADDR);
+    reverseHalfWord(&c);
+    if (c & NEGATIVE_SIGN) return (c & ~NEGATIVE_SIGN) * -1.25;
+    else return (c & ~NEGATIVE_SIGN) * 1.25;
+}
+float getVoltage(){
+    uint16_t v = wiringPiI2CReadReg16(fd_i2c, INA260_VOLTAGE_ADDR);
+    reverseHalfWord(&v);
+    return v * 0.00125;
+}
+float getPower(){
+    uint16_t p = wiringPiI2CReadReg16(fd_i2c, INA260_POWER_ADDR);
+    reverseHalfWord(&p);
+    if (p & NEGATIVE_SIGN) return (p & ~NEGATIVE_SIGN) * -0.01;
+    else return (p & ~NEGATIVE_SIGN) * 0.01;
 }
 

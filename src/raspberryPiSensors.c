@@ -6,10 +6,12 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
+#include <linux/kernel.h>
+#include <sys/sysinfo.h>
 #include "raspberryPiSensors.h"
 #include "ina260.h"
 
-int current = 12345;
+int current = 0;
 int voltage = 0;
 int power = 0;
 char addr[] = "0x40";
@@ -17,12 +19,10 @@ char desc[] = "Ina260 sensor";
 int lastUpdate = 0;
 int sensorStatus = 0;
 int errorCount = 0;
-int upTime = 0;
+long upTime = 0;
+struct sysinfo s_info;
 
-void setCurrent(){
-    gpmuInit();
-    current += 1;
-}
+
 /** Initializes the raspberryPiSensors module */
 void
 init_raspberryPiSensors(void)
@@ -98,7 +98,8 @@ handle_sensorCurrent(netsnmp_mib_handler *handler,
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
     
-    int value = 0;
+    current = (int)getCurrent();
+
     switch(reqinfo->mode) {
 
         case MODE_GET:
@@ -126,6 +127,7 @@ handle_sensorVoltage(netsnmp_mib_handler *handler,
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
     
+    int voltage = (int)getVoltage();
     switch(reqinfo->mode) {
 
         case MODE_GET:
@@ -153,6 +155,7 @@ handle_sensorPower(netsnmp_mib_handler *handler,
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
     
+    power = (int)getPower();
     switch(reqinfo->mode) {
 
         case MODE_GET:
@@ -314,7 +317,8 @@ handle_sensorUptime(netsnmp_mib_handler *handler,
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
+    sysinfo(&s_info);
+    upTime = s_info.uptime;
     switch(reqinfo->mode) {
 
         case MODE_GET:
