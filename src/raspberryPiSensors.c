@@ -3,13 +3,13 @@
  * using mib2c.scalar.conf
  */
 
-#include <net-snmp/net-snmp-config.h>
-#include <net-snmp/net-snmp-includes.h>
-#include <net-snmp/agent/net-snmp-agent-includes.h>
-#include <linux/kernel.h>
-#include <sys/sysinfo.h>
 #include "raspberryPiSensors.h"
 #include "ina260.h"
+#include <linux/kernel.h>
+#include <net-snmp/agent/net-snmp-agent-includes.h>
+#include <net-snmp/net-snmp-config.h>
+#include <net-snmp/net-snmp-includes.h>
+#include <sys/sysinfo.h>
 
 int current = 0;
 int voltage = 0;
@@ -22,296 +22,268 @@ int errorCount = 0;
 long upTime = 0;
 struct sysinfo s_info;
 
-
 /** Initializes the raspberryPiSensors module */
-void
-init_raspberryPiSensors(void)
-{
-    const oid sensorCurrent_oid[] = { 1,3,6,1,4,1,75,1,1,1 };
-    const oid sensorVoltage_oid[] = { 1,3,6,1,4,1,75,1,1,2 };
-    const oid sensorPower_oid[] = { 1,3,6,1,4,1,75,1,1,3 };
-    const oid sensorDescription_oid[] = { 1,3,6,1,4,1,75,1,1,4 };
-    const oid sensorAddress_oid[] = { 1,3,6,1,4,1,75,1,1,5 };
-    const oid sensorLastUpdate_oid[] = { 1,3,6,1,4,1,75,1,1,6 };
-    const oid sensorOperationalStatus_oid[] = { 1,3,6,1,4,1,75,1,2,1 };
-    const oid sensorErrorCount_oid[] = { 1,3,6,1,4,1,75,1,2,2 };
-    const oid sensorUptime_oid[] = { 1,3,6,1,4,1,75,1,2,3 };
+void init_raspberryPiSensors(void) {
+    const oid sensorCurrent_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 1, 1};
+    const oid sensorVoltage_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 1, 2};
+    const oid sensorPower_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 1, 3};
+    const oid sensorDescription_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 1, 4};
+    const oid sensorAddress_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 1, 5};
+    const oid sensorLastUpdate_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 1, 6};
+    const oid sensorOperationalStatus_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 2, 1};
+    const oid sensorErrorCount_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 2, 2};
+    const oid sensorUptime_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 2, 3};
+    const oid gpuPowerLimit_oid[] = {1, 3, 6, 1, 4, 1, 75, 1, 3, 1};
 
-  DEBUGMSGTL(("raspberryPiSensors", "Initializing\n"));
+    DEBUGMSGTL(("raspberryPiSensors", "Initializing\n"));
 
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorCurrent", handle_sensorCurrent,
-                               sensorCurrent_oid, OID_LENGTH(sensorCurrent_oid),
-                               HANDLER_CAN_RONLY
-        ));
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorVoltage", handle_sensorVoltage,
-                               sensorVoltage_oid, OID_LENGTH(sensorVoltage_oid),
-                               HANDLER_CAN_RONLY
-        ));
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorPower", handle_sensorPower,
-                               sensorPower_oid, OID_LENGTH(sensorPower_oid),
-                               HANDLER_CAN_RONLY
-        ));
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorDescription", handle_sensorDescription,
-                               sensorDescription_oid, OID_LENGTH(sensorDescription_oid),
-                               HANDLER_CAN_RONLY
-        ));
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorAddress", handle_sensorAddress,
-                               sensorAddress_oid, OID_LENGTH(sensorAddress_oid),
-                               HANDLER_CAN_RONLY
-        ));
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorLastUpdate", handle_sensorLastUpdate,
-                               sensorLastUpdate_oid, OID_LENGTH(sensorLastUpdate_oid),
-                               HANDLER_CAN_RONLY
-        ));
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorOperationalStatus", handle_sensorOperationalStatus,
-                               sensorOperationalStatus_oid, OID_LENGTH(sensorOperationalStatus_oid),
-                               HANDLER_CAN_RONLY
-        ));
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorErrorCount", handle_sensorErrorCount,
-                               sensorErrorCount_oid, OID_LENGTH(sensorErrorCount_oid),
-                               HANDLER_CAN_RONLY
-        ));
-    netsnmp_register_scalar(
-        netsnmp_create_handler_registration("sensorUptime", handle_sensorUptime,
-                               sensorUptime_oid, OID_LENGTH(sensorUptime_oid),
-                               HANDLER_CAN_RONLY
-        ));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorCurrent", handle_sensorCurrent, sensorCurrent_oid,
+        OID_LENGTH(sensorCurrent_oid), HANDLER_CAN_RONLY));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorVoltage", handle_sensorVoltage, sensorVoltage_oid,
+        OID_LENGTH(sensorVoltage_oid), HANDLER_CAN_RONLY));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorPower", handle_sensorPower, sensorPower_oid,
+        OID_LENGTH(sensorPower_oid), HANDLER_CAN_RONLY));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorDescription", handle_sensorDescription, sensorDescription_oid,
+        OID_LENGTH(sensorDescription_oid), HANDLER_CAN_RONLY));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorAddress", handle_sensorAddress, sensorAddress_oid,
+        OID_LENGTH(sensorAddress_oid), HANDLER_CAN_RONLY));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorLastUpdate", handle_sensorLastUpdate, sensorLastUpdate_oid,
+        OID_LENGTH(sensorLastUpdate_oid), HANDLER_CAN_RONLY));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorOperationalStatus", handle_sensorOperationalStatus,
+        sensorOperationalStatus_oid, OID_LENGTH(sensorOperationalStatus_oid),
+        HANDLER_CAN_RONLY));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorErrorCount", handle_sensorErrorCount, sensorErrorCount_oid,
+        OID_LENGTH(sensorErrorCount_oid), HANDLER_CAN_RONLY));
+    netsnmp_register_scalar(netsnmp_create_handler_registration(
+        "sensorUptime", handle_sensorUptime, sensorUptime_oid,
+        OID_LENGTH(sensorUptime_oid), HANDLER_CAN_RONLY));
 }
 
-int
-handle_sensorCurrent(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorCurrent(netsnmp_mib_handler *handler,
+                         netsnmp_handler_registration *reginfo,
+                         netsnmp_agent_request_info *reqinfo,
+                         netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
+
     current = (int)getCurrent();
 
-    switch(reqinfo->mode) {
+    switch (reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &current, sizeof(current));
-            break;
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &current,
+                                 sizeof(current));
+        break;
 
-
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorCurrent\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorCurrent\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;
 }
-int
-handle_sensorVoltage(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorVoltage(netsnmp_mib_handler *handler,
+                         netsnmp_handler_registration *reginfo,
+                         netsnmp_agent_request_info *reqinfo,
+                         netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
+
     int voltage = (int)getVoltage();
-    switch(reqinfo->mode) {
+    switch (reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &voltage, sizeof(voltage));
-            break;
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &voltage,
+                                 sizeof(voltage));
+        break;
 
-
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorVoltage\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorVoltage\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;
 }
-int
-handle_sensorPower(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorPower(netsnmp_mib_handler *handler,
+                       netsnmp_handler_registration *reginfo,
+                       netsnmp_agent_request_info *reqinfo,
+                       netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
+
     power = (int)getPower();
-    switch(reqinfo->mode) {
+    switch (reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &power, sizeof(power));
-            break;
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &power,
+                                 sizeof(power));
+        break;
 
-
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorPower\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorPower\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;
 }
-int
-handle_sensorDescription(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorDescription(netsnmp_mib_handler *handler,
+                             netsnmp_handler_registration *reginfo,
+                             netsnmp_agent_request_info *reqinfo,
+                             netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
-    switch(reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_OCTET_STR, desc, sizeof(desc));
-            break;
+    switch (reqinfo->mode) {
 
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_OCTET_STR, desc,
+                                 sizeof(desc));
+        break;
 
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorDescription\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorDescription\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;
 }
-int
-handle_sensorAddress(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorAddress(netsnmp_mib_handler *handler,
+                         netsnmp_handler_registration *reginfo,
+                         netsnmp_agent_request_info *reqinfo,
+                         netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
-    switch(reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_OCTET_STR, addr, sizeof(addr));
-            break;
+    switch (reqinfo->mode) {
 
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_OCTET_STR, addr,
+                                 sizeof(addr));
+        break;
 
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorAddress\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorAddress\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;
 }
-int
-handle_sensorLastUpdate(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorLastUpdate(netsnmp_mib_handler *handler,
+                            netsnmp_handler_registration *reginfo,
+                            netsnmp_agent_request_info *reqinfo,
+                            netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
-    switch(reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &lastUpdate, sizeof(lastUpdate));
-            break;
+    switch (reqinfo->mode) {
 
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &lastUpdate,
+                                 sizeof(lastUpdate));
+        break;
 
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorLastUpdate\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorLastUpdate\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;
 }
-int
-handle_sensorOperationalStatus(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorOperationalStatus(netsnmp_mib_handler *handler,
+                                   netsnmp_handler_registration *reginfo,
+                                   netsnmp_agent_request_info *reqinfo,
+                                   netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
-    switch(reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &sensorStatus, sizeof(sensorStatus));
-            break;
+    switch (reqinfo->mode) {
 
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER,
+                                 &sensorStatus, sizeof(sensorStatus));
+        break;
 
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorOperationalStatus\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR,
+                 "unknown mode (%d) in handle_sensorOperationalStatus\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;
 }
-int
-handle_sensorErrorCount(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorErrorCount(netsnmp_mib_handler *handler,
+                            netsnmp_handler_registration *reginfo,
+                            netsnmp_agent_request_info *reqinfo,
+                            netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
-    switch(reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER, &errorCount, sizeof(errorCount));
-            break;
+    switch (reqinfo->mode) {
 
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER, &errorCount,
+                                 sizeof(errorCount));
+        break;
 
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorErrorCount\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorErrorCount\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;
 }
-int
-handle_sensorUptime(netsnmp_mib_handler *handler,
-                          netsnmp_handler_registration *reginfo,
-                          netsnmp_agent_request_info   *reqinfo,
-                          netsnmp_request_info         *requests)
-{
+int handle_sensorUptime(netsnmp_mib_handler *handler,
+                        netsnmp_handler_registration *reginfo,
+                        netsnmp_agent_request_info *reqinfo,
+                        netsnmp_request_info *requests) {
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
@@ -319,17 +291,18 @@ handle_sensorUptime(netsnmp_mib_handler *handler,
        we don't need to loop over a list of requests; we'll only get one. */
     sysinfo(&s_info);
     upTime = s_info.uptime;
-    switch(reqinfo->mode) {
+    switch (reqinfo->mode) {
 
-        case MODE_GET:
-            snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &upTime, sizeof(upTime));
-            break;
+    case MODE_GET:
+        snmp_set_var_typed_value(requests->requestvb, ASN_INTEGER, &upTime,
+                                 sizeof(upTime));
+        break;
 
-
-        default:
-            /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorUptime\n", reqinfo->mode );
-            return SNMP_ERR_GENERR;
+    default:
+        /* we should never get here, so this is a really bad error */
+        snmp_log(LOG_ERR, "unknown mode (%d) in handle_sensorUptime\n",
+                 reqinfo->mode);
+        return SNMP_ERR_GENERR;
     }
 
     return SNMP_ERR_NOERROR;

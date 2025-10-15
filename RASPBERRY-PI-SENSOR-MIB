@@ -47,7 +47,7 @@ sensorStatus OBJECT-IDENTITY
 -- Current Reading
 sensorCurrent OBJECT-TYPE
     SYNTAX Integer32 (-15000..15000)
-    UNITS "Amps"
+    UNITS "miliAmps"
     MAX-ACCESS read-only
     STATUS current
     DESCRIPTION
@@ -57,7 +57,7 @@ sensorCurrent OBJECT-TYPE
 -- Voltage Reading
 sensorVoltage OBJECT-TYPE
     SYNTAX Integer32 (0..40960)
-    UNITS "Volts"
+    UNITS "miliVolts"
     MAX-ACCESS read-only
     STATUS current
     DESCRIPTION
@@ -67,7 +67,7 @@ sensorVoltage OBJECT-TYPE
 -- Power Reading
 sensorPower OBJECT-TYPE
     SYNTAX Integer32 (0..41943)
-    UNITS "Watts"
+    UNITS "miliWatts"
     MAX-ACCESS read-only
     STATUS current
     DESCRIPTION
@@ -136,6 +136,24 @@ sensorUptime OBJECT-TYPE
         "Time in seconds since the sensor was last initialized"
     ::= { sensorStatus 3 }
 
+-- GPU data group
+gpuData OBJECT-IDENTITY
+    STATUS current
+    DESCRIPTION
+        "Group containing GPU data"
+    ::= { raspberryPiSensors 3 }
+
+gpuPowerLimit OBJECT-TYPE
+    SYNTAX UInteger32 (0..500000000)
+    UNITS "Watts"
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+        "The current power limit of the GPU"
+    ::= { gpuData 1 }
+
+
+
 -- Conformance information
 raspberryPiSensorConformance OBJECT-IDENTITY
     STATUS current
@@ -164,7 +182,8 @@ raspberryPiSensorCompliance MODULE-COMPLIANCE
     MODULE
         MANDATORY-GROUPS {
             raspberryPiSensorDataGroup,
-            raspberryPiSensorStatusGroup
+            raspberryPiSensorStatusGroup,
+            raspberryPiGPUControlGroup
         }
     ::= { raspberryPiSensorCompliances 1 }
 
@@ -194,4 +213,12 @@ raspberryPiSensorStatusGroup OBJECT-GROUP
         "A collection of objects providing sensor status information"
     ::= { raspberryPiSensorGroups 2 }
 
+raspberryPiGPUControlGroup OBJECT-GROUP
+    OBJECTS {
+        gpuPowerLimit
+    }
+    STATUS current
+    DESCRIPTION
+        "A collection of GPU monitoring commands"
+    ::= { raspberryPiSensorGroups 3}
 END
