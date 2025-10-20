@@ -6,7 +6,7 @@ IncludeCategories:
     SortPriority:    0
     CaseSensitive:   false
   - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
-    Priority:        0
+    Priority:        4
     SortPriority:    0
     CaseSensitive:   false
   - Regex:           '.*'
