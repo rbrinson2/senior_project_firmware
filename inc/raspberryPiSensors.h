@@ -16,5 +16,6 @@ Netsnmp_Node_Handler handle_sensorLastUpdate;
 Netsnmp_Node_Handler handle_sensorOperationalStatus;
 Netsnmp_Node_Handler handle_sensorErrorCount;
 Netsnmp_Node_Handler handle_sensorUptime;
+Netsnmp_Node_Handler handle_gpuPowerLimit;
 
 #endif /* RASPBERRYPISENSORS_H */

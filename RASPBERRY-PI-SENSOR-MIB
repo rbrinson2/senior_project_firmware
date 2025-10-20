@@ -144,7 +144,7 @@ gpuData OBJECT-IDENTITY
     ::= { raspberryPiSensors 3 }
 
 gpuPowerLimit OBJECT-TYPE
-    SYNTAX UInteger32 (0..500000000)
+    SYNTAX UInteger32 (0..500)
     UNITS "Watts"
     MAX-ACCESS read-write
     STATUS current

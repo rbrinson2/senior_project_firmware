@@ -3,17 +3,18 @@
  * using mib2c.scalar.conf
  */
 
-#include "ina260.h"
-#include "raspberryPiSensors.h"
 #include <linux/kernel.h>
-#include <net-snmp/agent/net-snmp-agent-includes.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
+#include <net-snmp/agent/net-snmp-agent-includes.h>
 #include <sys/sysinfo.h>
+#include "ina260.h"
+#include "raspberryPiSensors.h"
 
 int current = 0;
 int voltage = 0;
 int power = 0;
+long gpuPower = 0;
 char addr[] = "0x40";
 char desc[] = "Ina260 sensor";
 int lastUpdate = 0;
@@ -324,9 +325,7 @@ int handle_gpuPowerLimit(netsnmp_mib_handler *handler,
     switch (reqinfo->mode) {
 
     case MODE_GET:
-        snmp_set_var_typed_value(requests->requestvb, ASN_UINTEGER,
-                                 /* XXX: a pointer to the scalar's data */,
-                                 /* XXX: the length of the data in bytes */);
+        snmp_set_var_typed_value(requests->requestvb, ASN_UINTEGER, &gpuPower, sizeof(gpuPower));
         break;
 
     /*
@@ -344,11 +343,6 @@ int handle_gpuPowerLimit(netsnmp_mib_handler *handler,
         break;
 
     case MODE_SET_RESERVE2:
-        /* XXX malloc "undo" storage buffer */
-        if (/* XXX if malloc, or whatever, failed: */) {
-            netsnmp_set_request_error(reqinfo, requests,
-                                      SNMP_ERR_RESOURCEUNAVAILABLE);
-        }
         break;
 
     case MODE_SET_FREE:
@@ -359,25 +353,26 @@ int handle_gpuPowerLimit(netsnmp_mib_handler *handler,
 
     case MODE_SET_ACTION:
         /* XXX: perform the value change here */
-        if (/* XXX: error? */) {
-            netsnmp_set_request_error(reqinfo, requests, /* some error */);
+        gpuPower = *(requests->requestvb->val.integer);
+        if (!gpuPower) {
+            netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_BADVALUE);
         }
         break;
 
     case MODE_SET_COMMIT:
-        /* XXX: delete temporary storage */
-        if (/* XXX: error? */) {
-            /* try _really_really_ hard to never get to this point */
-            netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_COMMITFAILED);
-        }
+        // /* XXX: delete temporary storage */
+        // if (/* XXX: error? */) {
+        //     /* try _really_really_ hard to never get to this point */
+        //     netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_COMMITFAILED);
+        // }
         break;
 
     case MODE_SET_UNDO:
-        /* XXX: UNDO and return to previous value for the object */
-        if (/* XXX: error? */) {
-            /* try _really_really_ hard to never get to this point */
-            netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_UNDOFAILED);
-        }
+        // /* XXX: UNDO and return to previous value for the object */
+        // if (/* XXX: error? */) {
+        //     /* try _really_really_ hard to never get to this point */
+        //     netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_UNDOFAILED);
+        // }
         break;
 
     default:
