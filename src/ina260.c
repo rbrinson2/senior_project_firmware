@@ -21,7 +21,7 @@ void gpmuInit() {
         fprintf(stdout, "Unable to start WiringPi: %s\n", strerror(errno));
     }
 
-    if ((fd_serial = serialOpen("/dev/ttyAMA0", 115200)) < 0) {
+    if ((fd_serial = serialOpen("/dev/ttyS0", 115200)) < 0) {
         fprintf(stderr, "Unable to open serial port: %s\n", strerror(errno));
     }
 
