@@ -343,6 +343,9 @@ int handle_gpuPowerLimit(netsnmp_mib_handler *handler,
         break;
 
     case MODE_SET_RESERVE2:
+        if (*(requests->requestvb->val.integer) > 500){
+            netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_BADVALUE);
+        }
         break;
 
     case MODE_SET_FREE:
@@ -354,6 +357,7 @@ int handle_gpuPowerLimit(netsnmp_mib_handler *handler,
     case MODE_SET_ACTION:
         /* XXX: perform the value change here */
         gpuPower = *(requests->requestvb->val.integer);
+        setPowerLimit(gpuPower);
         if (!gpuPower) {
             netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_BADVALUE);
         }

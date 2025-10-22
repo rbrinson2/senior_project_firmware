@@ -9,5 +9,6 @@ extern void gpmuInit();
 extern float getCurrent();
 extern float getVoltage();
 extern float getPower();
+extern void setPowerLimit(long pl);
 
 #endif

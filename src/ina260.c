@@ -53,4 +53,6 @@ float getPower(){
     if (p & NEGATIVE_SIGN) return (p & ~NEGATIVE_SIGN) * -0.01;
     else return (p & ~NEGATIVE_SIGN) * 0.01;
 }
-
+void setPowerLimit(long pl){
+    serialPrintf(fd_serial, "powerlimt: %d\r\n", pl);
+}
