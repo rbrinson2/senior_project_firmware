@@ -63,7 +63,7 @@ float getPower(){
     else return (p & ~NEGATIVE_SIGN) * 0.01;
 }
 void setPowerLimit(long pl){
-    serialPrintf(fd_serial, "setPowerlimt: %d\r\n", pl);
+    serialPrintf(fd_serial, "setPowerLimit: %d\r\n", pl);
 }
 unsigned long getPowerLimit(){
     char microwatts[MICRO_PLACES + 1];
