@@ -62,13 +62,16 @@ void getPowerLimit(){
     int i = 0;
     serialPrintf(fd_serial, "getPowerLimit\r\n");
     delay(10);
-    while (serialDataAvail(fd_serial) && i < MICRO_PLACES) {
-        microwatts[i] = serialDataAvail(fd_serial);
-        // printf("%c", (char)serialGetchar(fd_serial));
-        fflush(stdout);
-        if (0 == microwatts[i]) break;
-        ++i;
+
+    while (serialDataAvail(fd_serial) > 0 && i < MICRO_PLACES) {
+        char c = serialGetchar(fd_serial);
+        if (c == '\r' || c == '\n') break;
+        microwatts[i++] = c;
     }
-    if (0 == i) return;
-    printf("%s\r\n", microwatts);
+    microwatts[i] = '\0';
+
+    if (i > 0)
+        printf("%s\r\n", microwatts);
+    else 
+        printf("No data recieved\r\n");
 }
