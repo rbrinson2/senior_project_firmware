@@ -12,6 +12,7 @@
 #define INA260_VOLTAGE_ADDR  0x02
 #define INA260_POWER_ADDR  0x03
 #define NEGATIVE_SIGN 0x8000
+#define MICRO_PLACES 9
 
 int fd_serial;
 int fd_i2c;
@@ -54,5 +55,20 @@ float getPower(){
     else return (p & ~NEGATIVE_SIGN) * 0.01;
 }
 void setPowerLimit(long pl){
-    serialPrintf(fd_serial, "powerlimt: %d\r\n", pl);
+    serialPrintf(fd_serial, "setPowerlimt: %d\r\n", pl);
+}
+void getPowerLimit(){
+    char microwatts[MICRO_PLACES + 1];
+    int i = 0;
+    serialPrintf(fd_serial, "getPowerLimit\r\n");
+    delay(10);
+    while (serialDataAvail(fd_serial) && i < MICRO_PLACES) {
+        microwatts[i] = serialDataAvail(fd_serial);
+        // printf("%c", (char)serialGetchar(fd_serial));
+        fflush(stdout);
+        if (0 == microwatts[i]) break;
+        ++i;
+    }
+    if (0 == i) return;
+    printf("%s\r\n", microwatts);
 }

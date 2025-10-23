@@ -10,5 +10,6 @@ extern float getCurrent();
 extern float getVoltage();
 extern float getPower();
 extern void setPowerLimit(long pl);
+extern void getPowerLimit();
 
 #endif

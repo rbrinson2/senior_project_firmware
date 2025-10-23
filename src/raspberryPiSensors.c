@@ -325,6 +325,7 @@ int handle_gpuPowerLimit(netsnmp_mib_handler *handler,
     switch (reqinfo->mode) {
 
     case MODE_GET:
+        getPowerLimit();
         snmp_set_var_typed_value(requests->requestvb, ASN_UINTEGER, &gpuPower, sizeof(gpuPower));
         break;
 
