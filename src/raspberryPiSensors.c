@@ -14,7 +14,7 @@
 int current = 0;
 int voltage = 0;
 int power = 0;
-long gpuPower = 0;
+unsigned long gpuPower = 0;
 char addr[] = "0x40";
 char desc[] = "Ina260 sensor";
 int lastUpdate = 0;
@@ -325,7 +325,7 @@ int handle_gpuPowerLimit(netsnmp_mib_handler *handler,
     switch (reqinfo->mode) {
 
     case MODE_GET:
-        getPowerLimit();
+        gpuPower = getPowerLimit();
         snmp_set_var_typed_value(requests->requestvb, ASN_UINTEGER, &gpuPower, sizeof(gpuPower));
         break;
 
@@ -344,7 +344,7 @@ int handle_gpuPowerLimit(netsnmp_mib_handler *handler,
         break;
 
     case MODE_SET_RESERVE2:
-        if (*(requests->requestvb->val.integer) > 500){
+        if (*(requests->requestvb->val.integer) > gpuPowerMax || *(requests->requestvb->val.integer) < gpuPowerMin){
             netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_BADVALUE);
         }
         break;

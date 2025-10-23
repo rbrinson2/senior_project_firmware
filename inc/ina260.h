@@ -10,6 +10,11 @@ extern float getCurrent();
 extern float getVoltage();
 extern float getPower();
 extern void setPowerLimit(long pl);
-extern void getPowerLimit();
+extern unsigned long getPowerLimit();
+extern unsigned long getPowerMax();
+extern unsigned long getPowerMin();
+
+extern unsigned long gpuPowerMax;
+extern unsigned long gpuPowerMin;
 
 #endif

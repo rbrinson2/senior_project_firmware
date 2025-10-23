@@ -18,7 +18,6 @@ RETSIGTYPE stop_server(int a) {
 
 int main(){
 
-    gpmuInit();
 
     // Print log errors to stderr
     snmp_enable_stderrlog();
@@ -46,6 +45,7 @@ int main(){
 
     snmp_log(LOG_INFO, "gmpu-daemon is up and running.\n");
 
+    gpmuInit();
     //  Main wwhile loop
     while (keep_running){
 
