@@ -32,6 +32,7 @@ void gpmuInit() {
     }
 
     fd_i2c = wiringPiI2CSetup(I2C_ADDR);
+    wiringPiI2CWriteReg16(fd_i2c, INA260_CONFIG_ADDR, 0x276F);
 
     gpuPowerMax = getPowerMax();
     gpuPowerMin = getPowerMin();
@@ -48,20 +49,19 @@ void reverseHalfWord(uint16_t *halfword){
 float getCurrent(){
     uint16_t c = wiringPiI2CReadReg16(fd_i2c, INA260_CURRENT_ADDR);
     reverseHalfWord(&c);
-    if (c & NEGATIVE_SIGN) return (c & ~NEGATIVE_SIGN) * -1.25;
-    else return (c & ~NEGATIVE_SIGN) * 1.25;
+    return (int16_t)c * 0.00125;
 }
 float getVoltage(){
     uint16_t v = wiringPiI2CReadReg16(fd_i2c, INA260_VOLTAGE_ADDR);
     reverseHalfWord(&v);
-    return v * 0.00125;
+    return (v << 1) * 0.00125;
 }
 float getPower(){
     uint16_t p = wiringPiI2CReadReg16(fd_i2c, INA260_POWER_ADDR);
     reverseHalfWord(&p);
-    if (p & NEGATIVE_SIGN) return (p & ~NEGATIVE_SIGN) * -0.01;
-    else return (p & ~NEGATIVE_SIGN) * 0.01;
+    return ((int16_t)p << 1) * 0.01;
 }
+
 void setPowerLimit(long pl){
     serialPrintf(fd_serial, "setPowerLimit: %d\r\n", pl);
 }
@@ -129,5 +129,8 @@ unsigned long getPowerMin(){
 
     if (i == 0) printf("No data recieved\r\n");
 
-    return strtoul(microwatts, NULL, INT_BASE);
+    long mw = strtoul(microwatts, NULL, INT_BASE);
+    if (mw <= 0) mw = (long)(gpuPowerMax * 0.8);
+
+    return mw;
 }
